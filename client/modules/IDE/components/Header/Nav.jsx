@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import NavDropdownMenu from '../../../../components/Nav/NavDropdownMenu';
+import ConnectWalletButton from '../../../../components/Nav/ConnectWalletButton';
 import NavMenuItem from '../../../../components/Nav/NavMenuItem';
 import { availableLanguages, languageKeyToLabel } from '../../../../i18n';
 import getConfig from '../../../../utils/getConfig';
@@ -247,6 +248,7 @@ const ProjectMenu = () => {
         </NavMenuItem>
         <NavMenuItem href="/about">{t('Nav.Help.About')}</NavMenuItem>
       </NavDropdownMenu>
+      <ConnectWalletButton id="wallet-connection" />
     </ul>
   );
 };
