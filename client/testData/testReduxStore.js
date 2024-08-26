@@ -86,7 +86,12 @@ const initialTestState = {
     totalSize: 0
   },
   loading: false,
-  collections: []
+  collections: [],
+  starknetWallet: {
+    wallet: null,
+    error: null,
+    status: 'DISCONNECTED'
+  }
 };
 
 export { mockProjects, initialTestState };
