@@ -1,4 +1,6 @@
-import React from 'react';
+/* eslint-disable no-undef */
+/* eslint-disable prefer-destructuring */
+import React, { useState } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
@@ -20,8 +22,12 @@ import PlayIcon from '../../../../images/play.svg';
 import StopIcon from '../../../../images/stop.svg';
 import PreferencesIcon from '../../../../images/preferences.svg';
 import ProjectName from './ProjectName';
+import NFTMintModal from '../NFTMintModal';
 
 const Toolbar = (props) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
   const { isPlaying, infiniteLoop, preferencesIsVisible } = useSelector(
     (state) => state.ide
   );
@@ -113,6 +119,17 @@ const Toolbar = (props) => {
           return null;
         })()}
       </div>
+
+      {/* Mint Button */}
+      <button
+        className="toolbar__mint-button"
+        aria-label={t('Toolbar.MintNFT')}
+        onClick={openModal}
+        title={t('Toolbar.MintNFT')}
+      >
+        {t('Toolbar.MintNFT')}
+      </button>
+      <NFTMintModal isOpen={isModalOpen} onClose={closeModal} />
       <button
         className={preferencesButtonClass}
         onClick={() => dispatch(openPreferences())}

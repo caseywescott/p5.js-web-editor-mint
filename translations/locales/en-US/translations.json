@@ -133,7 +133,8 @@
     "StopSketchARIA": "Stop sketch",
     "EditSketchARIA": "Edit sketch name",
     "NewSketchNameARIA": "New sketch name",
-    "By": " by "
+    "By": " by ",
+    "MintNFT": "Mint SVG as NFT"
   },
   "Console": {
     "Title": "Console",
