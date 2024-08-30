@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-
+import '@testing-library/jest-dom/extend-expect';
 import { find } from 'lodash';
 
 import {
@@ -10,7 +10,6 @@ import {
   transformFiles,
   FileValidationError
 } from '../Project';
-import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('../../utils/createId');
 
@@ -22,11 +21,9 @@ describe('domain-objects/Project', () => {
   global.save = jest.fn();
 
   // Mock SVG creation function (p5.js-related)
-  const generateSVG = (sketch) => {
+  const generateSVG = (sketch) =>
     // Mock function to simulate SVG generation from p5.js sketches
-    return `<svg>${sketch}</svg>`;
-  };
-
+    `<svg>${sketch}</svg>`;
   // Test cases for SVG Generation, Export, and Validation
   describe('SVG Generation and Export', () => {
     describe('SVG Generation', () => {
@@ -219,6 +216,7 @@ describe('domain-objects/Project', () => {
 
 describe('transformFiles', () => {
   beforeEach(() => {
+    // eslint-disable-next-line global-require
     const { resetMockCreateId } = require('../../utils/createId');
     resetMockCreateId();
   });
