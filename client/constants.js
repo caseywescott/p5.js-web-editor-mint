@@ -139,3 +139,8 @@ export const SET_COOKIE_CONSENT = 'SET_COOKIE_CONSENT';
 
 export const CONSOLE_EVENT = 'CONSOLE_EVENT';
 export const CLEAR_CONSOLE = 'CLEAR_CONSOLE';
+
+export const SET_WALLET = 'SET_WALLET';
+export const RESET_WALLET = 'RESET_WALLET';
+export const SET_WALLET_ERROR = 'SET_WALLET_ERROR';
+export const SET_STATUS = 'SET_STATUS';

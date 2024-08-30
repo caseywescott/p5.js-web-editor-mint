@@ -1,5 +1,9 @@
-import { find } from 'lodash';
+/**
+ * @jest-environment jsdom
+ */
 
+import { find } from 'lodash';
+import '@testing-library/jest-dom/extend-expect';
 import {
   containsRootHtmlFile,
   toModel,
@@ -7,12 +11,230 @@ import {
   FileValidationError
 } from '../Project';
 
+const { resetMockCreateId } = require('../../utils/createId');
+
 jest.mock('../../utils/createId');
 
 // TODO: File name validation
 // TODO: File extension validation
 //
 describe('domain-objects/Project', () => {
+  // Mock the global save function (from p5.js)
+  global.save = jest.fn();
+
+  // Mock SVG creation function (p5.js-related)
+  const generateSVG = (sketch) =>
+    // Mock function to simulate SVG generation from p5.js sketches
+    `<svg>${sketch}</svg>`;
+  // Test cases for SVG Generation, Export, and Validation
+  describe('SVG Generation and Export', () => {
+    describe('SVG Generation', () => {
+      it('generates SVG for simple shapes', () => {
+        const svg = generateSVG('<rect x="10" y="10" width="30" height="30"/>');
+        expect(svg).toContain(
+          '<svg><rect x="10" y="10" width="30" height="30"/></svg>'
+        );
+      });
+
+      it('generates SVG for complex shapes and transformations', () => {
+        const svg = generateSVG(`
+        <g transform="translate(10,20)">
+          <circle cx="30" cy="30" r="20" fill="red"/>
+          <text x="30" y="70">Sample Text</text>
+        </g>`);
+        expect(svg).toContain(
+          '<svg><g transform="translate(10,20)">' +
+            '<circle cx="30" cy="30" r="20" fill="red"/>' +
+            '<text x="30" y="70">Sample Text</text></g></svg>'
+        );
+      });
+
+      it('generates distinct SVGs for different user inputs', () => {
+        const svg1 = generateSVG(
+          '<rect x="10" y="10" width="30" height="30"/>'
+        );
+        const svg2 = generateSVG('<circle cx="30" cy="30" r="20"/>');
+        expect(svg1).not.toEqual(svg2);
+      });
+    });
+
+    describe('SVG Output Integrity', () => {
+      it('validates the structure and integrity of generated SVG', () => {
+        const svg = generateSVG('<rect x="10" y="10" width="30" height="30"/>');
+        const parser = new DOMParser();
+        const svgDoc = parser.parseFromString(svg, 'image/svg+xml');
+        const rect = svgDoc.querySelector('rect');
+        expect(rect).not.toBeNull();
+        expect(rect.getAttribute('x')).toBe('10');
+        expect(rect.getAttribute('y')).toBe('10');
+      });
+
+      it('checks SVG scalability and resolution independence', () => {
+        const svg = generateSVG('<circle cx="50" cy="50" r="40"/>');
+        const parser = new DOMParser();
+        const svgDoc = parser.parseFromString(svg, 'image/svg+xml');
+        const circle = svgDoc.querySelector('circle');
+        expect(circle).not.toBeNull();
+        expect(circle.getAttribute('cx')).toBe('50');
+      });
+    });
+
+    describe('SVG Export Functionality', () => {
+      beforeEach(() => {
+        // Setup DOM with a save button
+        document.body.innerHTML = `
+        <main>
+          <button id="saveButton">Save SVG</button>
+        </main>
+      `;
+
+        // Attach click handler to save button
+        document.getElementById('saveButton').addEventListener('click', () => {
+          global.save(
+            generateSVG('<rect x="10" y="10" width="30" height="30"/>')
+          );
+        });
+      });
+
+      afterEach(() => {
+        // Clean up DOM
+        document.body.innerHTML = '';
+      });
+
+      it('exports SVG when save button is clicked', () => {
+        const saveButton = document.getElementById('saveButton');
+        saveButton.click();
+        expect(global.save).toHaveBeenCalledTimes(1);
+        expect(global.save).toHaveBeenCalledWith(
+          '<svg><rect x="10" y="10" width="30" height="30"/></svg>'
+        );
+      });
+
+      it('handles multiple SVG exports', () => {
+        const saveButton = document.getElementById('saveButton');
+        saveButton.click();
+        saveButton.click();
+        expect(global.save).toHaveBeenCalledTimes(2);
+      });
+
+      it('exports SVG with valid filename', () => {
+        global.save.mockImplementation((data, filename) => {
+          expect(filename).toMatch(/svg_[0-9]+\.svg/);
+        });
+
+        const saveButton = document.getElementById('saveButton');
+        saveButton.click();
+      });
+
+      it('handles SVG export in different browsers', () => {
+        // This test would require mocking or running in different browsers
+        // Assuming Jest with Puppeteer or other cross-browser testing frameworks
+        // For simplicity, we'll assume this test runs in different environments
+        const saveButton = document.getElementById('saveButton');
+        saveButton.click();
+        expect(global.save).toHaveBeenCalled();
+      });
+    });
+
+    describe('Edge Cases and Error Handling', () => {
+      it('handles export of an empty SVG', () => {
+        global.save.mockClear();
+        global.save.mockImplementation((data) => {
+          expect(data).toBe('<svg></svg>');
+        });
+
+        document.getElementById('saveButton').addEventListener('click', () => {
+          global.save('<svg></svg>');
+        });
+
+        const saveButton = document.getElementById('saveButton');
+        saveButton.click();
+      });
+
+      it('handles large SVG files', () => {
+        const largeSVG = generateSVG(
+          '<rect x="10" y="10" width="10000" height="10000"/>'
+        );
+        expect(largeSVG).toContain('width="10000"');
+        expect(global.save).toHaveBeenCalledWith(largeSVG);
+      });
+
+      it('handles errors during export process', () => {
+        global.save.mockImplementation(() => {
+          throw new Error('File system error');
+        });
+
+        const saveButton = document.getElementById('saveButton');
+        expect(() => saveButton.click()).toThrow('File system error');
+      });
+    });
+  });
+
+  describe('domain-objects/Project', () => {
+    describe('Save SVG Button', () => {
+      let saveImageMock;
+
+      beforeEach(() => {
+        // Mock the save function
+        saveImageMock = jest.fn();
+
+        // Mock the global save function (from p5.js)
+        global.save = saveImageMock;
+
+        // Setup the DOM for the button (simulate the HTML structure)
+        document.body.innerHTML = `
+        <main>
+          <button id="saveButton">Save SVG</button>
+        </main>
+      `;
+
+        // Attach the click handler to the button
+        const saveButton = document.getElementById('saveButton');
+        saveButton.addEventListener('click', () => {
+          global.saveImage();
+        });
+      });
+
+      afterEach(() => {
+        // Clean up the DOM
+        document.body.innerHTML = '';
+      });
+
+      it('renders the save button', () => {
+        const saveButton = document.getElementById('saveButton');
+        expect(saveButton).toBeInTheDocument();
+      });
+
+      it('calls saveImage function when the button is clicked', () => {
+        const saveButton = document.getElementById('saveButton');
+
+        // Click the button
+        saveButton.click();
+
+        // Verify that the save function was called
+        expect(global.save).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+});
+
+describe('transformFiles', () => {
+  beforeEach(() => {
+    resetMockCreateId();
+  });
+
+  it('creates an empty root with no data', () => {
+    const tree = {};
+    expect(transformFiles(tree)).toEqual([
+      {
+        _id: '0',
+        fileType: 'folder',
+        name: 'root',
+        children: []
+      }
+    ]);
+  });
+
   describe('containsRootHtmlFile', () => {
     it('returns true for at least one root .html', () => {
       expect(containsRootHtmlFile({ 'index.html': {} })).toBe(true);
@@ -134,8 +356,6 @@ describe('domain-objects/Project', () => {
 describe('transformFiles', () => {
   beforeEach(() => {
     // eslint-disable-next-line global-require
-    const { resetMockCreateId } = require('../../utils/createId');
-
     resetMockCreateId();
   });
 

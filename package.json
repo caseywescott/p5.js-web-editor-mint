@@ -165,6 +165,7 @@
     "@redux-devtools/dock-monitor": "^3.0.1",
     "@redux-devtools/log-monitor": "^4.0.2",
     "@reduxjs/toolkit": "^1.9.3",
+    "abi-wan-kanabi": "^2.2.3",
     "async": "^3.2.3",
     "axios": "^1.7.5",
     "babel-plugin-styled-components": "^1.13.2",
