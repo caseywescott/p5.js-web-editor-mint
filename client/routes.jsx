@@ -73,6 +73,7 @@ const routes = (
     <Route path="/assets" component={DashboardView} />
     <Route path="/account" component={AccountView} />
     <Route path="/about" component={IDEView} />
+    <Route path="/paymaster" component={IDEView} />
     <Route path="/privacy-policy" component={PrivacyPolicy} />
     <Route path="/terms-of-use" component={TermsOfUse} />
     <Route path="/code-of-conduct" component={CodeOfConduct} />

@@ -144,3 +144,5 @@ export const SET_WALLET = 'SET_WALLET';
 export const RESET_WALLET = 'RESET_WALLET';
 export const SET_WALLET_ERROR = 'SET_WALLET_ERROR';
 export const SET_STATUS = 'SET_STATUS';
+
+export const SET_SELECTED_GAS_PRICE = 'SET_SELECTED_GAS_PRICE';

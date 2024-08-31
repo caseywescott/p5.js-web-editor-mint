@@ -249,6 +249,7 @@ const ProjectMenu = () => {
         <NavMenuItem href="/about">{t('Nav.Help.About')}</NavMenuItem>
       </NavDropdownMenu>
       <ConnectWalletButton id="wallet-connection" />
+      <NavMenuItem href="/paymaster">Paymaster</NavMenuItem>
     </ul>
   );
 };
