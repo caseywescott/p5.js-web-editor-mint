@@ -22,11 +22,9 @@ describe('domain-objects/Project', () => {
   global.save = jest.fn();
 
   // Mock SVG creation function (p5.js-related)
-  const generateSVG = (sketch) => {
+  const generateSVG = (sketch) =>
     // Mock function to simulate SVG generation from p5.js sketches
-    return `<svg>${sketch}</svg>`;
-  };
-
+    `<svg>${sketch}</svg>`;
   // Test cases for SVG Generation, Export, and Validation
   describe('SVG Generation and Export', () => {
     describe('SVG Generation', () => {
