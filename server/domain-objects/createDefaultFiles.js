@@ -26,22 +26,43 @@ function createSVG(index) {
   clear();
   
   // Example drawing commands
-  fill(255);
-  ellipse(200, 300, 150, 200); // Body
-  ellipse(250, 350, 50, 50);   // Right Leg
-  ellipse(150, 350, 50, 50);   // Left Leg
-  ellipse(200, 200, 100, 100); // Head
-  ellipse(170, 120, 30, 100);  // Left Ear
-  ellipse(230, 120, 30, 100);  // Right Ear
-  fill(0);
-  ellipse(180, 190, 20, 20);    // Left Eye
-  ellipse(220, 190, 20, 20);    // Right Eye
+   background(220);
+  
+  // Randomize colors and sizes
+  let bodyColor = color(random(100, 255), random(100, 255), random(100, 255));
+  let eyeColor = color(random(0, 255), random(0, 255), random(0, 255));
+  
+  // Draw the body
+  fill(bodyColor);
+  ellipse(200, 300, random(100, 200), random(150, 250));
+
+  // Draw the legs
+  ellipse(250, 350, 50, 50);
+  ellipse(150, 350, 50, 50);
+
+  // Draw the head
+  ellipse(200, 200, 100, 100);
+
+  // Draw the ears
+  ellipse(170, 120, 30, 100);
+  ellipse(230, 120, 30, 100);
+
+  // Draw the eyes
+  fill(eyeColor);
+  ellipse(180, 190, 20, 20);
+  ellipse(220, 190, 20, 20);
+
+  // Draw the nose
   fill(255, 182, 193);
-  ellipse(200, 220, 15, 10);    // Nose
-  line(200, 230, 190, 240);     // Left Mouth Line
-  line(200, 230, 210, 240);     // Right Mouth Line
-  line(160, 220, 190, 220);     // Left Whiskers
-  line(210, 220, 240, 220);     // Right Whiskers
+  ellipse(200, 220, 15, 10);
+
+  // Draw the mouth
+  line(200, 230, 190, 240);
+  line(200, 230, 210, 240);
+
+  // Draw the whiskers
+  line(160, 220, 190, 220);
+  line(210, 220, 240, 220);
 
   // Store SVG in array
   svgArray.push(document.querySelector('svg').outerHTML);
