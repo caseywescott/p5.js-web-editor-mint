@@ -1,7 +1,6 @@
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 import {
   useStarknetWallet,
   WALLET_CONNECTION_STATUS
@@ -26,7 +25,6 @@ function ConnectWalletButton({ id }) {
     if (status === WALLET_CONNECTION_STATUS.CONNECTING) {
       setButtonTextState('Connecting...');
     } else if (status === WALLET_CONNECTION_STATUS.ERROR) {
-      // TODO: Improve this
       setButtonTextState(`Error: ${error}`);
     } else if (status === WALLET_CONNECTION_STATUS.CONNECTED) {
       const address = String(wallet.account.address);
@@ -40,14 +38,9 @@ function ConnectWalletButton({ id }) {
   }, [wallet, error, status]);
 
   return (
-    <>
-      <button
-        className={classNames('connect-wallet-button')}
-        onClick={handleClick}
-      >
-        {buttonTextState}
-      </button>
-    </>
+    <button className="connect-wallet-button" onClick={handleClick}>
+      {buttonTextState}
+    </button>
   );
 }
 

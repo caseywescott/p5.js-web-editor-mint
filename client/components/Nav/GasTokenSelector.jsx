@@ -40,9 +40,7 @@ const GasTokenSelector = () => {
                 htmlFor={gasTokenPrice.tokenAddress}
                 className="toolbar__autorefresh-label"
               >
-                {`${
-                  ADDRESS_TO_TOKEN[gasTokenPrice.tokenAddress]
-                } - Price in USD: ${gasTokenPrice.tokenAddress}`}
+                {ADDRESS_TO_TOKEN[gasTokenPrice.tokenAddress]}
               </label>
             </div>
           ))}

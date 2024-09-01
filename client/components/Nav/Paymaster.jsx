@@ -21,8 +21,6 @@ function Paymaster() {
     (state) => state.paymaster.selectedGasTokenPrice
   );
 
-  console.log('wallet ', wallet);
-
   return (
     <div className="paymaster__content">
       <Helmet>
@@ -45,9 +43,7 @@ function Paymaster() {
             aria-hidden="true"
             focusable="false"
           />
-          {wallet
-            ? `Connected with account wallet ${String(wallet.account.address)}`
-            : 'Not connected'}
+          {wallet ? `Connected` : 'Not connected'}
         </p>
         <p className="paymaster__content-column-list">
           <AsteriskIcon
@@ -88,7 +84,7 @@ function Paymaster() {
             target="_blank"
             rel="noreferrer"
           >
-            Success:{tx}
+            Success: {tx}
           </a>
         )}
       </div>
