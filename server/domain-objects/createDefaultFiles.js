@@ -29,12 +29,12 @@ function createSVG(index) {
    background(220);
   
   // Randomize colors and sizes
-  let bodyColor = color(random(100, 255), random(100, 255), random(100, 255));
-  let eyeColor = color(random(0, 255), random(0, 255), random(0, 255));
+  let bodyColor = color(random(100, 255) * 100, random(100, 255) * 50 , random(100, 255) * 200);
+  let eyeColor = color(random(0, 255) * 100, random(0, 255) * 50 , random(0, 255) * 200);
   
   // Draw the body
   fill(bodyColor);
-  ellipse(200, 300, random(100, 200), random(150, 250));
+  ellipse(200, 300, random(100, 200) * 100 , random(150, 250) * 50);
 
   // Draw the legs
   ellipse(250, 350, 50, 50);
