@@ -1,15 +1,17 @@
 /**
  * @jest-environment jsdom
  */
-import '@testing-library/jest-dom/extend-expect';
-import { find } from 'lodash';
 
+import { find } from 'lodash';
+import '@testing-library/jest-dom/extend-expect';
 import {
   containsRootHtmlFile,
   toModel,
   transformFiles,
   FileValidationError
 } from '../Project';
+
+const { resetMockCreateId } = require('../../utils/createId');
 
 jest.mock('../../utils/createId');
 
@@ -41,7 +43,9 @@ describe('domain-objects/Project', () => {
           <text x="30" y="70">Sample Text</text>
         </g>`);
         expect(svg).toContain(
-          '<svg><g transform="translate(10,20)"><circle cx="30" cy="30" r="20" fill="red"/><text x="30" y="70">Sample Text</text></g></svg>'
+          '<svg><g transform="translate(10,20)">' +
+            '<circle cx="30" cy="30" r="20" fill="red"/>' +
+            '<text x="30" y="70">Sample Text</text></g></svg>'
         );
       });
 
@@ -216,8 +220,6 @@ describe('domain-objects/Project', () => {
 
 describe('transformFiles', () => {
   beforeEach(() => {
-    // eslint-disable-next-line global-require
-    const { resetMockCreateId } = require('../../utils/createId');
     resetMockCreateId();
   });
 
@@ -354,8 +356,6 @@ describe('transformFiles', () => {
 describe('transformFiles', () => {
   beforeEach(() => {
     // eslint-disable-next-line global-require
-    const { resetMockCreateId } = require('../../utils/createId');
-
     resetMockCreateId();
   });
 
