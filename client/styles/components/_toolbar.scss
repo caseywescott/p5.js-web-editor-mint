@@ -21,7 +21,7 @@
 					fill: getThemifyVariable('button-border-color');
 				}
 			}
-	    }
+		}
 	}
 	margin-right: #{math.div(15, $base-font-size)}rem;
 	span {
@@ -81,6 +81,31 @@
 	}
 }
 
+.toolbar__mint-button {
+	@include themify() {
+		@extend %toolbar-button;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: #{math.div(8, $base-font-size)}rem #{math.div(15, $base-font-size)}rem;
+		color: #333;
+		background-color: getThemifyVariable('toolbar-button-background-color');
+		border-radius: #{math.div(5, $base-font-size)}rem;
+		cursor: pointer;
+		transition: background-color 0.3s ease;
+		min-width: fit-content;
+
+		&:hover {
+			background-color: getThemifyVariable('button-hover-background-color');
+		}
+		&:disabled {
+			cursor: not-allowed;
+			opacity: 0.5;
+		}
+	}
+	margin-left: #{math.div(10, $base-font-size)}rem;
+}
+
 .toolbar__logo {
 	margin-right: #{math.div(30, $base-font-size)}rem;
 	@include themify() {
@@ -102,8 +127,8 @@
 .toolbar__project-name-container {
 	margin-left: #{math.div(10, $base-font-size)}rem;
 	padding-left: #{math.div(10, $base-font-size)}rem;
-  display: flex;
-  align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 .toolbar .editable-input__label {
@@ -143,9 +168,9 @@
 	align-items: center;
 }
 
-.checkbox__autorefresh{
+.checkbox__autorefresh {
 	cursor: pointer;
-	@include themify(){
-		accent-color:getThemifyVariable('logo-color');
+	@include themify() {
+		accent-color: getThemifyVariable('logo-color');
 	}
 }

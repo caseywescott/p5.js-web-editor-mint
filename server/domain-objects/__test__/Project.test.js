@@ -3,14 +3,15 @@
  */
 
 import { find } from 'lodash';
-
+import '@testing-library/jest-dom/extend-expect';
 import {
   containsRootHtmlFile,
   toModel,
   transformFiles,
   FileValidationError
 } from '../Project';
-import '@testing-library/jest-dom/extend-expect';
+
+const { resetMockCreateId } = require('../../utils/createId');
 
 jest.mock('../../utils/createId');
 
@@ -22,11 +23,9 @@ describe('domain-objects/Project', () => {
   global.save = jest.fn();
 
   // Mock SVG creation function (p5.js-related)
-  const generateSVG = (sketch) => {
+  const generateSVG = (sketch) =>
     // Mock function to simulate SVG generation from p5.js sketches
-    return `<svg>${sketch}</svg>`;
-  };
-
+    `<svg>${sketch}</svg>`;
   // Test cases for SVG Generation, Export, and Validation
   describe('SVG Generation and Export', () => {
     describe('SVG Generation', () => {
@@ -44,7 +43,9 @@ describe('domain-objects/Project', () => {
           <text x="30" y="70">Sample Text</text>
         </g>`);
         expect(svg).toContain(
-          '<svg><g transform="translate(10,20)"><circle cx="30" cy="30" r="20" fill="red"/><text x="30" y="70">Sample Text</text></g></svg>'
+          '<svg><g transform="translate(10,20)">' +
+            '<circle cx="30" cy="30" r="20" fill="red"/>' +
+            '<text x="30" y="70">Sample Text</text></g></svg>'
         );
       });
 
@@ -219,7 +220,6 @@ describe('domain-objects/Project', () => {
 
 describe('transformFiles', () => {
   beforeEach(() => {
-    const { resetMockCreateId } = require('../../utils/createId');
     resetMockCreateId();
   });
 
@@ -356,8 +356,6 @@ describe('transformFiles', () => {
 describe('transformFiles', () => {
   beforeEach(() => {
     // eslint-disable-next-line global-require
-    const { resetMockCreateId } = require('../../utils/createId');
-
     resetMockCreateId();
   });
 
