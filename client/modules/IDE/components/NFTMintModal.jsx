@@ -1,8 +1,26 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { connect } from 'get-starknet';
 
+// Spinner Animation
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+// Spinner Component
+const Spinner = styled.div`
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top: 4px solid #333;
+  border-radius: 50%;
+  align-self: center;
+  width: 40px;
+  height: 40px;
+  animation: ${spin} 1s linear infinite;
+`;
+
+// Modal and Other Styled Components
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -148,9 +166,47 @@ const ErrorMessage = styled.p`
   margin-top: -10px;
 `;
 
+const StatusBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  font-size: 1em;
+  color: ${(props) => (props.status === 'failed' ? 'red' : 'blue')};
+`;
+
+const StatusMessage = styled.p`
+  margin-top: 10px;
+  font-size: 1.2em;
+  text-align: center;
+`;
+
+// Transaction Status Block Component
+const TransactionStatusBlock = ({ status }) => {
+  if (!status) return null;
+
+  return (
+    <StatusBlock status={status}>
+      {status === 'pending' && <Spinner />}
+      <StatusMessage>
+        {status === 'pending' && 'Transaction is pending...'}
+        {status === 'confirmed' && 'Transaction confirmed!'}
+        {status === 'failed' && 'Transaction failed. Please try again.'}
+      </StatusMessage>
+    </StatusBlock>
+  );
+};
+
+TransactionStatusBlock.propTypes = {
+  status: PropTypes.string.isRequired
+};
+
+// NFT Mint Modal Component
 const NFTMintModal = ({ isOpen, onClose }) => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [transactionStatus, setTransactionStatus] = useState(null);
   const [errors, setErrors] = useState({});
   const [nftData, setNftData] = useState({
     name: '',
@@ -158,7 +214,6 @@ const NFTMintModal = ({ isOpen, onClose }) => {
     artistName: '',
     artistBio: ''
   });
-  //   const { t } = useTranslation();
 
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -202,6 +257,19 @@ const NFTMintModal = ({ isOpen, onClose }) => {
     return valid;
   };
 
+  const resetState = () => {
+    setStep(1);
+    setLoading(false);
+    setTransactionStatus(null);
+    setErrors({});
+    setNftData({
+      name: '',
+      description: '',
+      artistName: '',
+      artistBio: ''
+    });
+  };
+
   const handleNext = useCallback(async () => {
     if (step === 1) {
       if (validateStep1()) {
@@ -210,31 +278,42 @@ const NFTMintModal = ({ isOpen, onClose }) => {
     } else if (step === 2) {
       if (validateStep2()) {
         setLoading(true);
+        setTransactionStatus('pending');
         try {
           const starknet = await connect();
           if (!starknet) {
             throw new Error('Please install a Starknet wallet extension.');
           }
-          await new Promise((resolve) => setTimeout(resolve, 2000));
           setStep(3);
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+          setTransactionStatus('confirmed');
+          setStep(4);
         } catch (error) {
           console.error('Minting failed', error);
+          setTransactionStatus('failed');
           setErrors((prev) => ({
             ...prev,
             minting: error.message || 'Minting failed'
           }));
+          setStep(4);
         } finally {
           setLoading(false);
         }
       }
-    } else {
+    } else if (step === 4) {
       onClose();
+      resetState();
     }
   }, [step, nftData, onClose]);
 
   const handleBack = useCallback(() => {
     if (step > 1) setStep(step - 1);
   }, [step]);
+
+  const getButtonLabel = () => {
+    if (loading) return <Spinner />;
+    return step < 4 ? 'Next' : 'Close';
+  };
 
   const renderStep1 = () => (
     <StyledContent>
@@ -255,18 +334,13 @@ const NFTMintModal = ({ isOpen, onClose }) => {
         <Textarea
           name="description"
           placeholder="Description"
+          rows="5"
           onChange={handleInputChange}
           value={nftData.description}
         />
         {errors.description && (
           <ErrorMessage>{errors.description}</ErrorMessage>
         )}
-        <ButtonRow>
-          <Button onClick={handleBack} disabled>
-            Back
-          </Button>
-          <Button onClick={handleNext}>Next</Button>
-        </ButtonRow>
       </Column>
     </StyledContent>
   );
@@ -274,12 +348,10 @@ const NFTMintModal = ({ isOpen, onClose }) => {
   const renderStep2 = () => (
     <StyledContent>
       <Column>
-        <ArtistAvatar>
-          <span>Artist Avatar</span>
-        </ArtistAvatar>
+        <ArtistAvatar />
       </Column>
       <Column>
-        <SectionTitle>ARTIST SECTION</SectionTitle>
+        <SectionTitle>ARTIST DETAILS</SectionTitle>
         <Input
           name="artistName"
           placeholder="Artist Name"
@@ -290,41 +362,38 @@ const NFTMintModal = ({ isOpen, onClose }) => {
         <Textarea
           name="artistBio"
           placeholder="Artist Bio"
+          rows="5"
           onChange={handleInputChange}
           value={nftData.artistBio}
         />
         {errors.artistBio && <ErrorMessage>{errors.artistBio}</ErrorMessage>}
-        <ButtonRow>
-          <Button onClick={handleBack}>Back</Button>
-          <Button onClick={handleNext} disabled={loading}>
-            {loading ? 'Minting...' : 'MINT NFT'}
-          </Button>
-        </ButtonRow>
-        {errors.minting && <ErrorMessage>{errors.minting}</ErrorMessage>}
       </Column>
+    </StyledContent>
+  );
+
+  const renderTransactionStatus = () => (
+    <StyledContent>
+      <TransactionStatusBlock status={transactionStatus} />
     </StyledContent>
   );
 
   const renderStep3 = () => (
     <StyledContent>
-      <Column>
-        <CongratsMessage>
-          Congratulations! Your NFT has been minted.
-        </CongratsMessage>
-        <ButtonRow>
-          <Button onClick={onClose}>Close</Button>
-        </ButtonRow>
-      </Column>
+      <CongratsMessage>
+        Congratulations! Your NFT has been minted!
+      </CongratsMessage>
     </StyledContent>
   );
 
-  const renderContent = () => {
+  const renderStepContent = () => {
     switch (step) {
       case 1:
         return renderStep1();
       case 2:
         return renderStep2();
       case 3:
+        return renderTransactionStatus();
+      case 4:
         return renderStep3();
       default:
         return null;
@@ -336,8 +405,29 @@ const NFTMintModal = ({ isOpen, onClose }) => {
   return (
     <ModalOverlay>
       <ModalContent>
-        <CloseButton onClick={onClose}>&times;</CloseButton>
-        {renderContent()}
+        <CloseButton
+          onClick={() => {
+            onClose();
+            resetState();
+          }}
+        >
+          &times;
+        </CloseButton>
+        {renderStepContent()}
+        <ButtonRow>
+          {step > 1 && step < 4 && (
+            <Button onClick={handleBack} disabled={loading}>
+              Back
+            </Button>
+          )}
+          <Button
+            onClick={handleNext}
+            disabled={loading}
+            style={{ marginLeft: 'auto' }}
+          >
+            {getButtonLabel()}
+          </Button>
+        </ButtonRow>
       </ModalContent>
     </ModalOverlay>
   );
