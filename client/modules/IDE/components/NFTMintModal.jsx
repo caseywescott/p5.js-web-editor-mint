@@ -1,7 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'get-starknet';
+import { useSelector } from 'react-redux';
+import useIframeContent from '../hooks/useIframeContentMintModal';
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -13,7 +15,7 @@ const ModalOverlay = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999;
+  z-index: 40;
 `;
 
 const ModalContent = styled.div`
@@ -31,7 +33,7 @@ const CloseButton = styled.button`
   right: 10px;
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 2rem;
   cursor: pointer;
 `;
 
@@ -103,8 +105,6 @@ const Button = styled.button`
 const NFTPreview = styled.div`
   width: 100%;
   height: 200px;
-  background: url('https://www.w3schools.com/w3images/avatar2.png') center/cover
-    no-repeat;
   border-radius: 8px;
   margin-bottom: 24px;
   display: flex;
@@ -113,19 +113,7 @@ const NFTPreview = styled.div`
   color: #fff;
   font-size: 1.5em;
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-`;
-
-const ArtistAvatar = styled.div`
-  width: 100%;
-  height: 120px;
-  background: url('https://www.w3schools.com/w3images/avatar5.png') center/cover
-    no-repeat;
-  border-radius: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 24px;
+  overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
@@ -158,7 +146,11 @@ const NFTMintModal = ({ isOpen, onClose }) => {
     artistName: '',
     artistBio: ''
   });
-  //   const { t } = useTranslation();
+  const files = useSelector((state) => state.files);
+  const svgFile = files.find((file) => file.name === 'sketch.js');
+  const svgContent = svgFile ? svgFile.content : '';
+  const srcDoc = useIframeContent(svgContent);
+  const iframeRef = useRef(null);
 
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -218,7 +210,6 @@ const NFTMintModal = ({ isOpen, onClose }) => {
           await new Promise((resolve) => setTimeout(resolve, 2000));
           setStep(3);
         } catch (error) {
-          console.error('Minting failed', error);
           setErrors((prev) => ({
             ...prev,
             minting: error.message || 'Minting failed'
@@ -240,7 +231,12 @@ const NFTMintModal = ({ isOpen, onClose }) => {
     <StyledContent>
       <Column>
         <NFTPreview>
-          <span>NFT Preview</span>
+          <iframe
+            title="SVG preview"
+            ref={iframeRef}
+            srcDoc={srcDoc}
+            style={{ width: '100%', height: '500px', border: 'none' }}
+          />
         </NFTPreview>
       </Column>
       <Column>
@@ -274,9 +270,14 @@ const NFTMintModal = ({ isOpen, onClose }) => {
   const renderStep2 = () => (
     <StyledContent>
       <Column>
-        <ArtistAvatar>
-          <span>Artist Avatar</span>
-        </ArtistAvatar>
+        <NFTPreview>
+          <iframe
+            title="SVG preview"
+            ref={iframeRef}
+            srcDoc={srcDoc}
+            style={{ width: '100%', height: '500px', border: 'none' }}
+          />
+        </NFTPreview>
       </Column>
       <Column>
         <SectionTitle>ARTIST SECTION</SectionTitle>
