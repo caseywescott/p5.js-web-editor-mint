@@ -14,6 +14,7 @@ import sorting from './modules/IDE/reducers/sorting';
 import loading from './modules/IDE/reducers/loading';
 import collections from './modules/IDE/reducers/collections';
 import starknetWallet from './modules/IDE/reducers/starknetWallet';
+import paymaster from './modules/IDE/reducers/paymaster';
 
 const rootReducer = combineReducers({
   ide,
@@ -30,7 +31,8 @@ const rootReducer = combineReducers({
   assets,
   loading,
   collections,
-  starknetWallet
+  starknetWallet,
+  paymaster
 });
 
 export default rootReducer;

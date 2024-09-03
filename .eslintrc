@@ -36,7 +36,7 @@
       { "ignorePureComponents": true
     }],
     "class-methods-use-this": 0,
-    "react/jsx-no-bind": [2, {"allowBind": true, "allowArrowFunctions": true}],
+    "react/jsx-no-bind": "off",
     "no-return-assign": [2, "except-parens"],
     "jsx-a11y/anchor-is-valid": [
       "error",

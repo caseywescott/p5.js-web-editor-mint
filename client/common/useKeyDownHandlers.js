@@ -1,5 +1,5 @@
-import { mapKeys } from 'lodash';
 import PropTypes from 'prop-types';
+import { mapKeys } from 'lodash';
 import { useCallback, useEffect, useRef } from 'react';
 
 /**
@@ -64,5 +64,6 @@ export const DocumentKeyDown = ({ handlers }) => {
   return null;
 };
 DocumentKeyDown.propTypes = {
+  // eslint-disable-next-line react/require-default-props
   handlers: PropTypes.objectOf(PropTypes.func)
 };

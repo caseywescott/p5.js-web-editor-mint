@@ -10,8 +10,8 @@ FROM base AS development
 ENV NODE_ENV development
 COPY package.json package-lock.json ./
 RUN npm install
-RUN npm install abi-wan-kanabi
-RUN npm install get-starknet starknet
+RUN npm install ajv
+RUN npm install @avnu/gasless-sdk
 COPY .babelrc index.js nodemon.json ./
 COPY ./webpack ./webpack
 COPY client ./client

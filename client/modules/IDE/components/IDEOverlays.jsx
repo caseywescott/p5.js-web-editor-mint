@@ -20,6 +20,7 @@ import Preferences from './Preferences';
 import { CollectionSearchbar } from './Searchbar';
 import ShareModal from './ShareModal';
 import UploadFileModal from './UploadFileModal';
+import Paymaster from '../../../components/Nav/Paymaster';
 
 export default function IDEOverlays() {
   const { t } = useTranslation();
@@ -47,6 +48,15 @@ export default function IDEOverlays() {
           closeOverlay={() => dispatch(closePreferences())}
         >
           <Preferences />
+        </Overlay>
+      )}
+      {location.pathname === '/paymaster' && (
+        <Overlay
+          title="Paymaster"
+          previousPath={previousPath}
+          ariaLabel="Paymaster"
+        >
+          <Paymaster />
         </Overlay>
       )}
       {location.pathname === '/about' && (
