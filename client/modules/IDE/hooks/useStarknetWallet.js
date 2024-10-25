@@ -1,15 +1,11 @@
 import { useCallback } from 'react';
-import {
-  connect as getStarknetWallet,
-  disconnect as resetStarknetWallet
-} from 'get-starknet';
+import { useConnect, useDisconnect, useAccount } from '@starknet-react/core';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setWallet,
   resetWallet,
   setWalletError,
   setStatus
-  // eslint-disable-next-line import/extensions
 } from '../actions/starknetWallet';
 
 export const WALLET_CONNECTION_STATUS = {
@@ -19,49 +15,35 @@ export const WALLET_CONNECTION_STATUS = {
   ERROR: 'ERROR'
 };
 
-// eslint-disable-next-line import/prefer-default-export
 export const useStarknetWallet = () => {
   const dispatch = useDispatch();
+  const { connect } = useConnect();
+  const { disconnect } = useDisconnect();
+  const { address, isConnected } = useAccount();
   const status = useSelector((state) => state.starknetWallet.status);
 
-  const connect = useCallback(
-    async ({ autoConnect } = {}) => {
-      const doConnect = async () => {
-        try {
-          dispatch(setStatus(WALLET_CONNECTION_STATUS.CONNECTING));
-          const wallet = await getStarknetWallet({
-            modalOptions: { theme: 'dark' },
-            ...(autoConnect ? { showList: false } : {})
-          });
-          if (wallet) {
-            dispatch(setWallet(wallet));
-          } else {
-            // this case may happen if popup is closed before connection
-            dispatch(setStatus(WALLET_CONNECTION_STATUS.DISCONNECTED));
-          }
-        } catch (error) {
-          dispatch(setWalletError(error));
-        }
-      };
-
-      if (
-        status !== WALLET_CONNECTION_STATUS.CONNECTED &&
-        status !== WALLET_CONNECTION_STATUS.CONNECTING
-      ) {
-        await doConnect();
+  const connectWallet = useCallback(async () => {
+    try {
+      dispatch(setStatus(WALLET_CONNECTION_STATUS.CONNECTING));
+      await connect();
+      if (isConnected && address) {
+        dispatch(setWallet({ account: { address } }));
+      } else {
+        dispatch(setStatus(WALLET_CONNECTION_STATUS.DISCONNECTED));
       }
-    },
-    [status]
-  );
+    } catch (error) {
+      dispatch(setWalletError(error));
+    }
+  }, [connect, isConnected, address]);
 
-  const reset = () => {
-    resetStarknetWallet({ clearLastWallet: true, clearDefaultWallet: true });
+  const reset = useCallback(() => {
+    disconnect();
     dispatch(resetWallet());
-  };
+  }, [disconnect]);
 
   return {
     status,
-    connect,
+    connect: connectWallet,
     reset
   };
 };

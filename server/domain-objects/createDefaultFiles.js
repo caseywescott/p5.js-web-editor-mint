@@ -5,38 +5,40 @@ export const defaultSketch = `function setup() {
   saveButton.mousePressed(saveImage);
 }
 function draw() {
-  background(220);
-  // Draw the body
-  fill(255);
-  ellipse(200, 300, 150, 200);
+  background(255); // Set the background to white
 
-  // Draw the legs
-  ellipse(250, 350, 50, 50)
-  ellipse(150, 350, 50, 50)
+  // Dark purple color (equivalent to hsl(257, 62%, 18%))
+  let darkPurple = color(48, 25, 67);
 
-  // Draw the head
-  ellipse(200, 200, 100, 100);
+  // Fill color for glasses
+  fill(darkPurple);
+  noStroke();
 
-  // Draw the ears
-  ellipse(170, 120, 30, 100);
-  ellipse(230, 120, 30, 100);
+  // Glasses frames (two squares)
+  rect(100, 110, 60, 60);  // Left glass frame
+  rect(170, 110, 60, 60);  // Right glass frame
 
-  // Draw the eyes
-  fill(0);
-  ellipse(180, 190, 20, 20);
-  ellipse(220, 190, 20, 20);
+  // Bridge of the glasses (small rectangle)
+  rect(160, 130, 10, 10);  // Bridge
 
-  // Draw the nose
-  fill(255, 182, 193);
-  ellipse(200, 220, 15, 10);
+  // Left-side extension of the glasses
+  rect(70, 130, 30, 10);  // Horizontal extension
+  rect(70, 140, 10, 20);  // Vertical extension
 
-  // Draw the mouth
-  line(200, 230, 190, 240);
-  line(200, 230, 210, 240);
-
-  // Draw the whiskers
-  line(160, 220, 190, 220);
-  line(210, 220, 240, 220);
+  // Inner parts of the glasses (white and black alternating inside)
+  // Left glass
+  fill(255);  // White
+  rect(110, 120, 20, 40);
+  
+  fill(0);  // Black
+  rect(130, 120, 20, 40);
+  
+  // Right glass
+  fill(255);  // White
+  rect(180, 120, 20, 40);
+  
+  fill(0);  // Black
+  rect(200, 120, 20, 40);
 }
 
 function saveImage() {
