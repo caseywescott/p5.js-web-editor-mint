@@ -7,6 +7,7 @@ import DevTools from './components/DevTools';
 import { setPreviousPath } from '../IDE/actions/ide';
 import { setLanguage } from '../IDE/actions/preferences';
 import CookieConsent from '../User/components/CookieConsent';
+import StarknetProvider from './components/StarknetProvider';
 
 function hideCookieConsent(pathname) {
   if (pathname.includes('/full/') || pathname.includes('/embed/')) {
@@ -51,9 +52,11 @@ const App = ({ children }) => {
 
   return (
     <div className="app">
-      <CookieConsent hide={hide} />
-      {isMounted && showReduxDevTools() && <DevTools />}
-      {children}
+      <StarknetProvider>
+        <CookieConsent hide={hide} />
+        {isMounted && showReduxDevTools() && <DevTools />}
+        {children}
+      </StarknetProvider>
     </div>
   );
 };

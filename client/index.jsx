@@ -10,6 +10,7 @@ import ThemeProvider from './modules/App/components/ThemeProvider';
 import Loader from './modules/App/components/loader';
 import './i18n';
 import SkipLink from './components/SkipLink';
+import StarknetProvider from './modules/App/components/StarknetProvider';
 
 require('./styles/main.scss');
 
@@ -33,10 +34,12 @@ const App = () => {
 
   return (
     <>
-      <Router history={browserHistory}>
-        <SkipLink targetId="play-sketch" text="PlaySketch" />
-        <Routing />
-      </Router>
+      <StarknetProvider>
+        <Router history={browserHistory}>
+          <SkipLink targetId="play-sketch" text="PlaySketch" />
+          <Routing />
+        </Router>
+      </StarknetProvider>
     </>
   );
 };
